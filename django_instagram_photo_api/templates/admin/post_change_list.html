@@ -1,0 +1,42 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls%}
+
+{% block object-tools-items %}
+    {% if has_add_permission %}
+    <li>
+      <form method="post" id="sync-app-form" action="{% url 'instagram-feed:sync-by-app' %}">
+        {% csrf_token %}
+        <label>
+          Synchronize:
+          <select name="app_id" required="">
+            {% for app in apps %}
+            <option value="{{ app.id }}">{{ app.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <button type="submit" class="button" title="Synchronize selected application" style="padding: 6px 14px; margin: 0px;">Sync</button>
+      </form>
+    </li>
+    {% endif %}
+    <li>
+      {% url cl.opts|admin_urlname:'add_by_url' as add_by_url %}
+        <a href="add_by_url" class="addlink">
+          {% blocktrans %} Add Post by Url{% endblocktrans %}
+        </a>
+    </li>
+    {{ block.super }}
+
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+  <script>
+    django.jQuery(function() {
+      django.jQuery('#sync-app-form button').click(function(e) {
+        e.preventDefault();
+        django.jQuery('#sync-app-form').submit();
+        return false;
+      });
+    });
+   </script>
+{% endblock %}
