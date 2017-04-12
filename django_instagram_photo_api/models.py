@@ -61,7 +61,10 @@ class Tag(models.Model):
 class Post(models.Model):
     application = models.ForeignKey(InstagramApp, related_name='app_post')
     media_id = models.CharField(_('Media ID'), max_length=100)
-    photo = ThumbnailerImageField(upload_to='instagram_photos')
+    photo = ThumbnailerImageField(upload_to='instagram_photos', height_field='photo_height', 
+        width_field='photo_width')
+    photo_height = models.PositiveIntegerField(default=0, editable=False)
+    photo_width = models.PositiveIntegerField(default=0, editable=False)
     link = models.URLField(_('Link'))
     tags = models.ManyToManyField(Tag)
     caption = models.TextField(
