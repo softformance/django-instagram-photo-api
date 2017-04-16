@@ -11,7 +11,7 @@ Django Instagram photo api
 .. image:: https://codecov.io/gh/DmytroLitvinov/django-instagram-photo-api/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/DmytroLitvinov/django-instagram-photo-api
 
-Get photos from Instagram by hashtags
+Get photos from Instagram by hashtags.
 
 Documentation
 -------------
@@ -24,6 +24,12 @@ Quickstart
 Install Django Instagram photo api::
 
     pip install django-instagram-photo-api
+
+Install Django Facebook photo api from GitHub::
+
+    virtualenv photostream
+    source photostream/bin/activate
+    pip install -e git+https://github.com/softformance/django-instagram-photo-api.git#egg=django-instagram-photo-api
 
 Add it to your `INSTALLED_APPS`:
 
@@ -49,10 +55,17 @@ Add Django Instagram photo api's URL patterns:
         ...
     ]
 
+- Create at `Instagram Developer <https://www.instagram.com/developer/register/>`_ new application.
+- Add into Django admin ``Instagram applications`` model your ``client id``, ``secret id``, ``access token``.
+- Add a hashtag to your ``Hashtags`` model.
+- Sync your posts :)
+
 Features
 --------
 
-* TODO
+* Retrieve from Instagram photos by hashtag.
+* Sync added hashtags, add a post by URL and add a post manually.
+* Get photos from your backend server by simple URL.
 
 Running Tests
 -------------
