@@ -34,8 +34,6 @@ def get_medias_by_tag(tag, access_token, count):
         if resp.status_code == 200:
             return resp.json()
         else:
-            if resp.status_code == 400:
-                invalid_token_handler()
             resp = resp.json()
             message = resp['meta'].get('error_message')
             logger.exception(message)

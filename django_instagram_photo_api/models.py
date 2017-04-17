@@ -4,11 +4,11 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+from django.db.models import signals
+
 from easy_thumbnails.fields import ThumbnailerImageField
-
-
-class Settings(models.Model):
-    pass
+from django_celery_beat.models import PeriodicTask, PeriodicTasks, \
+    IntervalSchedule, CrontabSchedule, SolarSchedule
 
 
 class InstagramApp(models.Model):
@@ -38,6 +38,11 @@ class InstagramApp(models.Model):
 
     def __str__(self):
         return '%s from application %s' % (self.id, self.name)
+
+
+class TaskShedulerInstagram(PeriodicTask):
+    periodic_task = models.ForeignKey(InstagramApp, on_delete=models.SET_NULL, 
+        blank=True, null=True, related_name='periodic_task')
 
 
 class Tag(models.Model):
@@ -88,3 +93,17 @@ class Post(models.Model):
             return None
 
 
+signals.pre_delete.connect(PeriodicTasks.changed, sender=TaskShedulerInstagram)
+signals.pre_save.connect(PeriodicTasks.changed, sender=TaskShedulerInstagram)
+signals.pre_delete.connect(
+    PeriodicTasks.update_changed, sender=IntervalSchedule)
+signals.post_save.connect(
+    PeriodicTasks.update_changed, sender=IntervalSchedule)
+signals.post_delete.connect(
+    PeriodicTasks.update_changed, sender=CrontabSchedule)
+signals.post_save.connect(
+    PeriodicTasks.update_changed, sender=CrontabSchedule)
+signals.post_delete.connect(
+    PeriodicTasks.update_changed, sender=SolarSchedule)
+signals.post_save.connect(
+    PeriodicTasks.update_changed, sender=SolarSchedule)

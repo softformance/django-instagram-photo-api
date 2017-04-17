@@ -10,7 +10,9 @@ from django.core.files.base import ContentFile
 from django.forms.models import ModelForm
 
 from .utils import get_media_by_url
-from .models import Post, Tag, InstagramApp
+from .models import Post, Tag, InstagramApp, TaskShedulerInstagram
+from django_celery_beat.models import PeriodicTask
+from django_celery_beat.admin import PeriodicTaskForm
 
 
 class PostUrlForm(forms.ModelForm):
@@ -120,9 +122,39 @@ class TagAdmin(admin.ModelAdmin):
     list_filter = ('application', 'name', )
 
 
+class TaskShedulerInline(admin.StackedInline):
+    form = PeriodicTaskForm
+    model = TaskShedulerInstagram
+    max_num = 1
+    classes = ['collapse']    
+
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'regtask', 'task', 'enabled'),
+            'classes': ('extrapretty', 'wide'),
+        }),
+        ('Schedule', {
+            'fields': ('interval', 'crontab'),
+            'classes': ('extrapretty', 'wide'),
+        }),
+        ('Arguments', {
+            'fields': ('args', 'kwargs'),
+            'classes': ('extrapretty', 'wide'),
+        }),
+        ('Execution Options', {
+            'fields': ('expires', 'queue', 'exchange', 'routing_key'),
+            'classes': ('extrapretty', 'wide'),
+        }),
+    )
+
+
 class InstagramAppAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'name')
+
+    inlines = [
+        TaskShedulerInline,
+    ]
 
     def response_change(self, request, obj):
         response = super(InstagramAppAdmin, self).response_change(request, obj)
