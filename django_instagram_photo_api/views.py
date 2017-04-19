@@ -106,6 +106,7 @@ def get_posts(request, app_id):
     posts = Post.objects.filter(**params)\
         .filter(show=True) \
         .order_by(order_by) \
+        .distinct() \
         .values('media_id', 'photo', 'link', 'caption', 'photo_height', 
             'photo_width')[:count]
 
